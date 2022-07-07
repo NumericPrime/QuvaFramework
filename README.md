@@ -122,7 +122,7 @@ public class QuvaMain extends QUBOMatrix{
 ```
 </details>
 </details>
-# How to install
+# Installation
 
 <ol>
 	<li>Download the latest release</li>
