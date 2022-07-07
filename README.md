@@ -14,31 +14,31 @@ import quva.core.*;
 
 public class QuvaMain extends QUBOMatrix{
 	public QuvaMain() {
-    //creates empty matrix with 100 qubits
+   		 //creates empty matrix with 100 qubits
 		super(100);
-    //sets up the prorisation system for conditions (conditions with highter prority are weighted by the factor 10
-    // and the baseline is set at prority 0 rather than 1)
+    		//sets up the prorisation system for conditions (conditions with highter prority are weighted by the factor 10
+    		// and the baseline is set at prority 0 rather than 1)
 		init(10,false);
-    //The distances between the cities
+    		//The distances between the cities
 		float[][] distances= {{0,3,4},{3,0,5},{4,5,0}};
 		int n=distances.length;
-    //Sets the priority of the conditions to follow to one (The higher the number the higher the priority)
+   		 //Sets the priority of the conditions to follow to one (The higher the number the higher the priority)
 		layer(1);
-    //groups the qubits in groups of n to make referencing them easier (the weights are added to make it easier to read the results)
+    		//groups the qubits in groups of n to make referencing them easier (the weights are added to make it easier to read the results)
 		for(int i=0;i<n;i++) register("step"+i,n,fromIntArray(range(1,n)));
-    //Limits the merchant to visit only one city at a time
+    		//Limits the merchant to visit only one city at a time
 		for(int i=0;i<n;i++) limit(1,find("step"+i));
-    //Limits the merchant to visit a city only once
+    		//Limits the merchant to visit a city only once
 		for(int i=0;i<n;i++) limit(1,range(i,n*n-n+i,n));
-    //Sets the prority to the baseline (wich was set to 0)
+   		 //Sets the prority to the baseline (wich was set to 0)
 		layer(0);
-    //Adds the travel costs
+   		 //Adds the travel costs
 		for(int i=0;i<n;i++) pattern(distances,find("step"+i),find("step"+(i+1)%n));
 		//prints the matrix
-    //System.out.println(this);
-    //Simulates the hamilton-matrix
+    		//System.out.println(this);
+   		 //Simulates the hamilton-matrix
 		int[] results=execute(SIMULATE);
-    //reads the results
+   		 //reads the results
 		System.out.println("The merchant visits the cities in the order: ");
 		for(int i=0;i<n;i++) System.out.print((int)readVar(results,"step"+i)+" ");
 	}
@@ -49,6 +49,76 @@ public class QuvaMain extends QUBOMatrix{
 	}
 }
 ```
+</details><details><summary>Solving equations</summary>
+This is an example on how to solve the equation x^2+2x-1=9 -> x^2+2x-8=0
 
+```java
+
+import quva.core.*;
+
+public class QuvaMain extends QUBOMatrix{
+	public QuvaMain() {
+		//inits the matrix
+		super(100);
+		init(10,false);
+		//adds conditions with a priority of 1 (the higher the number the higher the priority)
+		layer(1);
+		//registers the variable x=-4q_0+2q_1+1q_2
+		register("x",3,4,true);
+		//registers xx as the product of x with itself
+		registerMultiplyCarries("xx","x","x");
+		layer(0);
+		//adds the equation as a linear equation
+		linearEquation("-8+2*x+1*xx");
+		//prints out the hamilton matrix
+		System.out.println(this);
+		//executes the QUBO-Problem
+		int ret[]=execute(SIMULATE);
+		//reads x
+		System.out.println("x="+readVar(ret,"x"));
+	}
+}
+```
+</details><details><summary>Primality Test</summary>
+This program checks if a number is prime and if not it returns a p and q with n=p*q
+
+```java
+
+import quva.core.*;
+
+public class QuvaMain extends QUBOMatrix{
+	public QuvaMain() {
+		super(100);
+		init(10,false);
+		int n=21;
+
+		//Calculating the bits needed to represent each number
+		int l1=binaryDigits(n)-2;
+		int l2=(int)((l1+1)/2);
+
+		//registers p and q/ p=2^l1*p_0+2^(l1-1)p_1+2^(l1-2)p_2+...+2p_(l1-1)
+		register("p",l1,(int)Math.pow(2,l1),false);
+		register("q",l2,(int)Math.pow(2,l2),false);
+		//multiplies p*q
+		registerMultiplyCarries("pq","p","q");
+
+		//adds the equation 0=n-(p+1)(q+1)=n-pq-p-q-1
+		linearEquation(n+" -1*pq  -1*p  -1*q  -1");
+
+		//Optimization 
+		for(int i=find("pq").length-1;i>=0;i--) if(findWeight("pq")[i]>n) remove(find("pq")[i],false);
+		for(int i=find("p").length-1;i>=0;i--) for(int j=find("q").length-1;j>=0;j--) if(findWeight("p")[i]*findWeight("q")[j]>n) add(4,find("p")[i],find("q")[j]); 
+
+		push();
+		int[] returnvalues=execute(SIMULATE);
+		println("");
+		int p=(int)(readVar(returnvalues,"p")+1);
+		int q=(int)(readVar(returnvalues,"q")+1);
+
+		if(p*q==n) println("no prime number ("+n+"="+p+"*"+q+")");
+		if(p*q!=n) println(n+" is a prime number");
+	}
+}
+```
 </details>
 </details>
