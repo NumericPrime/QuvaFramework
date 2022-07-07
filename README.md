@@ -109,7 +109,6 @@ public class QuvaMain extends QUBOMatrix{
 		for(int i=find("pq").length-1;i>=0;i--) if(findWeight("pq")[i]>n) remove(find("pq")[i],false);
 		for(int i=find("p").length-1;i>=0;i--) for(int j=find("q").length-1;j>=0;j--) if(findWeight("p")[i]*findWeight("q")[j]>n) add(4,find("p")[i],find("q")[j]); 
 
-		push();
 		int[] returnvalues=execute(SIMULATE);
 		println("");
 		int p=(int)(readVar(returnvalues,"p")+1);
