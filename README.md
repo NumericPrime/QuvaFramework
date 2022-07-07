@@ -122,3 +122,18 @@ public class QuvaMain extends QUBOMatrix{
 ```
 </details>
 </details>
+# How to install
+
+<ol>
+	<li>Download the latest release</li>
+	<li>Unzip it</li>
+	<li>In pythonSctiptsRoot/QuboFromAPI replace Insert Token Here with your API token to get access to the DWave solvers</li>
+	<li>Add Quva.jar to your build path and make sure pythonScriptsRoot is in the same folder of Quva.jar</li>
+</ol>
+
+# Requirements
+Java 12 (or higher)
+Python 3 (on Windows 64-bit)
+Python libraries:
+	ocean-sdk
+	dwave-qbsolv
