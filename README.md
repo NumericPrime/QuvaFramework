@@ -132,8 +132,11 @@ public class QuvaMain extends QUBOMatrix{
 </ol>
 
 # Requirements
-Java 12 (or higher)
-Python 3 (on Windows 64-bit)
-Python libraries:
-	ocean-sdk
-	dwave-qbsolv
+
+<ul>
+	<li>Java 12 (or higher)</li>
+<li>Python 3 (on Windows 64-bit)</li>
+<li>Python libraries:</li>
+<li>	ocean-sdk</li>
+<li>	dwave-qbsolv</li>
+</ul>
