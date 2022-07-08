@@ -5,6 +5,44 @@ This API allows quantumannealing using Java. This API is made for people new to 
 Quva can also let a simulation of the quantumannealer run and solve the QUBO-Problem as well as send the hamiltonmatrix to a real quantumannealer. Quva also allows reading the results and postprocessing them.
 <details>
 <summary>Examples</summary>
+<details><summary>n-Queens Problem</summary>
+
+```java
+
+import quva.core.*;
+
+public class QuvaMain extends QUBOMatrix{
+	public QuvaMain() {
+		//inits an empty matrix
+		super(100);
+		int n=6;
+
+		//Each group of n (0 - n-1;n - 2n-1;...;n*n-n  - n*n-1) only has one qubit with the value 1
+		for(int i=0;i<n;i++) limit(1,range(0+i*n,n-1 +i*n));
+		//Each group that can be written like (i+0,i+n,i+2n,...,i+n*n-n) has exactly one qubit with the value one
+		for(int i=0;i<n;i++) limit(1,range(0+i,n*n-n +i,n));
+
+		//These conditions look if the queens are on the same diagonal. If so a punishment of one is added
+		/*Same as 
+		for(int i=0;i<n*n;i++) for(int j=0;j<n*n;j++) if(((i/n)-(i%n))==((j/n)-(j%n))&&i!=j) add(1,i,j);*/
+		 applyRule(range(0,n*n-1),range(0,n*n-1),(i,j)-> ((i/n)-(i%n))==((j/n)-(j%n))&&i!=j, (i,j) ->1 );
+		/*Same as 
+		for(int i=0;i<n*n;i++) for(int j=0;j<n*n;j++) if(((i/n)+(i%n))==((j/n)+(j%n))&&i!=j) add(1,i,j);*/
+		 applyRule(range(0,n*n-1),range(0,n*n-1),(i,j)-> ((i/n)+(i%n))==((j/n)+(j%n))&&i!=j, (i,j) ->1);
+
+		//Runs the hamilton matrix
+		int[] results=execute(SIMULATE);
+
+		//prints the results
+		for(int i=0;i<results.length;i++) {
+		System.out.print(" "+results[i]);
+		if(i%n==n-1)System.out.println("");
+		}
+	}
+}
+```
+
+</details>
 <details><summary>Traveling Salesman</summary>
 This is the code required to solve the traveling Salesman problem:
 
