@@ -288,7 +288,7 @@ public class Launcher {
 <ol>
 	<li>Download the latest release</li>
 	<li>Unzip it</li>
-	<li>In pythonSctiptsRoot/QuboFromAPI replace Insert Token Here with your API token to get access to the DWave solvers</li>
+	<li>In pythonSctiptsRoot/QuboFromAPI replace Insert Token Here with your API token to get access to the DWave solvers (No longer necessary with Quva 0.4)</li>
 	<li>Add Quva.jar to your build path and make sure pythonScriptsRoot is in the same folder of Quva.jar</li>
 </ol>
 
