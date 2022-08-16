@@ -158,6 +158,129 @@ public class QuvaMain extends QUBOMatrix{
 }
 ```
 </details>
+<details><summary>Collection of examples</summary>
+
+```java
+package quvatest.main;
+
+import quva.core.QUBOMatrix;
+import quva.core.QuvaApplication;
+import quva.core.QuvaExecutionSettings;
+import quva.core.QuvaUtilities;
+import quva.postprocessing.OutputForm;
+
+import static quva.core.QuvaUtilities.*;
+
+public class Launcher {
+
+	public Launcher() {
+		QuvaExecutionSettings.executionSettings(AUTOCHAINSTRENGTH,AUTOTRUNCATE);
+		QuvaExecutionSettings.apiToken("Insert Token here");
+		QuvaExecutionSettings.samples(7500);
+	}
+	//most basic example. Takes a hamilton matrix and runs a simulation
+	public void example1() {
+		float[][] matrix={
+				{0,1,-2},
+				{0,0,-2},
+				{0,0, 2}
+		};
+		
+		int[] res=QUBOMatrix.sample(matrix, SIMULATE);
+		
+		for(int bit:res)System.out.print(bit+" ");
+	}
+	
+	//Solves the following System of linear equation
+	//x+2y=5
+	//2x+y=4
+	public void example2() {
+		new QuvaApplication(SIMULATE) {
+		@Override
+		public void build() {
+			//Registers 2 variables with 3 logical qubit each
+			//x=4x_0+2x_1+x_2
+			registerNat("x",3);
+			registerNat("y",3);
+			
+			//Inserts linear equations
+			linearEquation("x+2*y-5");
+			linearEquation("2*x+y-4");
+			
+			setPostProcessingHandler(PRINTALLVARS);
+		}
+		};
+	}
+	//Solves the equation 1/8*x^3+2x^2-7=0
+	public void example3() {
+		new QuvaApplication(SIMULATE) {
+		@Override
+		public void build() {
+			//Creates a new variable
+			register("x",3,2f);
+			
+			//Adds a new polynomial Equation (Note: this only takes one variable)
+			//If you want a linear expression you can do so in the second argument.
+			//If you want to e.g. add y you need to write +y into the second argument
+			polynomialEquation("7-2*x^2+0.125*x^3","");
+			
+			//Uses the OutputForm postprocessing handler
+			setPostProcessingHandler(new OutputForm("The value of x is:?x!!"));
+			//Using this commented out command will make the example return the values of all vars
+			//including the ones making the polynomialEquation work
+			//setPostProcessingHandler(PRINTALLVARS);
+			println(this);
+		}
+		};
+		
+	}
+	//Solves the traveling salesman problem
+	public void example4() {
+		new QuvaApplication(SIMULATE) {
+		@Override
+		public void build() {
+			//Sets a weight of 5
+			init(5);
+			
+			//Matrix with the costs of travel
+			float[][] A= {{0,3,4},{3,0,5},{4,5,0}};
+			//Registers the stops as variables of the type:
+			//1x_0+2x_1+3x_2+...
+			for(int i=0;i<A.length;i++) register("stop"+i,A.length,toFloatArray(range(1,A.length)));
+			
+			//Adds the conditions
+			//Sets the priority (All new weights are to be multiplied by 5)
+			layer(1);
+			//Adds a punishment for visiting the same city twice or visits two cities at once
+			applyRule(
+				range(0,A.length*A.length-1),range(0,A.length*A.length-1),
+				(i,j)->
+				(i/A.length)==(j/A.length)
+				||(i%A.length)==(j%A.length)
+				,(i,j)->1);
+			
+			applyRule(range(0,A.length*A.length-1),
+					QuvaUtilities::retTrue
+					,(i)->-A.length);
+			
+			//Sets the priority (All new weights are to be multiplied by 1)
+			layer(0);
+			//Adds the travel costs
+			for(int i=0;i<A.length;i++) pattern(A,find("stop"+i),find("stop"+((i+1)%A.length)));
+			
+			//Makes it return all variables
+			setPostProcessingHandler(PRINTALLVARS);
+		}
+		};
+		
+	}
+	public static void main(String[] args) {
+		new Launcher();
+	}
+}
+
+```
+</details>
 </details>
 
 # Installation
