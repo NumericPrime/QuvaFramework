@@ -197,6 +197,7 @@ public class Launcher {
 	public void example2() {
 		new QuvaApplication(SIMULATE) {
 		@Override
+
 		public void build() {
 			//Registers 2 variables with 3 logical qubit each
 			//x=4x_0+2x_1+x_2
@@ -301,3 +302,6 @@ public class Launcher {
 <li>	ocean-sdk</li>
 <li>	dwave-qbsolv</li>
 </ul>
+	
+[QuvaTestGithub.zip](https://github.com/NumericPrime/QuvaAPI/files/9352885/QuvaTestGithub.zip)
+[QuvaAPI.zip](https://github.com/NumericPrime/QuvaAPI/files/9352889/QuvaAPI.zip)
