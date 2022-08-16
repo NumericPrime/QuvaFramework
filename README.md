@@ -283,7 +283,9 @@ public class Launcher {
 ```
 </details>
 </details>
-The source code (and documentation) of quva can be found here:[QuvaAPI.zip](https://github.com/NumericPrime/QuvaAPI/files/9352889/QuvaAPI.zip).<br>
+The source code (and documentation) of quva can be found here:
+	
+[QuvaAPI.zip](https://github.com/NumericPrime/QuvaAPI/files/9352889/QuvaAPI.zip).<br>
 The documentation can be found in the doc/ folder
 
 # Installation
@@ -294,7 +296,8 @@ The documentation can be found in the doc/ folder
 	<li>In pythonSctiptsRoot/QuboFromAPI replace Insert Token Here with your API token to get access to the DWave solvers (No longer necessary with Quva 0.4)</li>
 	<li>Add Quva.jar to your build path and make sure pythonScriptsRoot is in the same folder of Quva.jar</li>
 </ol>
-This is an example eclipse-project that uses Quva:	
+This is an example eclipse-project that uses Quva:
+	
 [QuvaTestGithub.zip](https://github.com/NumericPrime/QuvaAPI/files/9352885/QuvaTestGithub.zip)
 
 # Requirements
