@@ -1,5 +1,5 @@
-# QuvaAPI
-An Java-based API to use Quantumannealers
+# Quva
+An Java-based Framework to use Quantumannealers
 
 This API allows quantumannealing using Java. This API is made for people new to quantumannealing. It adds many features beyond basic manipulation of the hamilton matrix such as basic mathematical operations and variables. 
 Quva can also let a simulation of the quantumannealer run and solve the QUBO-Problem as well as send the hamiltonmatrix to a real quantumannealer. Quva also allows reading the results and postprocessing them.
