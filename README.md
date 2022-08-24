@@ -285,7 +285,7 @@ public class Launcher {
 </details>
 The source code (and documentation) of quva can be found here:
 	
-[QuvaAPISrc.zip](https://github.com/NumericPrime/SwingHelperProcessing/releases/latest/download/QuvaAPISrc.zip)
+[QuvaAPISrc.zip](https://github.com/NumericPrime/QuvaAPI/releases/latest/download/QuvaAPISrc.zip)
 The documentation can be found in the doc/ folder
 
 # Installation
@@ -297,9 +297,8 @@ The documentation can be found in the doc/ folder
 	<li>Add Quva.jar to your build path and make sure pythonScriptsRoot is in the same folder of Quva.jar</li>
 </ol>
 This is an example eclipse-project that uses Quva:
-	
-[QuvaTestGithub.zip](https://github.com/NumericPrime/QuvaAPI/files/9352885/QuvaTestGithub.zip)
 
+[QuvaAPISrc.zip](https://github.com/NumericPrime/QuvaAPI/releases/latest/download/QuvaTestGithub.zip)
 # Requirements
 
 <ul>
