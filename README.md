@@ -1,5 +1,5 @@
 # Quva
-An Java-based Framework to use Quantumannealers
+A Java-based Framework to use Quantumannealers
 
 This Framework allows quantumannealing using Java. It is made for people new to quantumannealing and adds many features beyond basic manipulation of the hamilton matrix such as basic mathematical operations and variables, as well es polynomial equations. 
 Quva can also let a simulation of the quantumannealer run and solve the QUBO-Problem as well as send the hamiltonmatrix to a real quantumannealer. It also allows reading the results and postprocessing them.
