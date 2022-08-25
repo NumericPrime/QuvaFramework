@@ -285,7 +285,7 @@ public class Launcher {
 </details>
 The source code (and documentation) of quva can be found here:
 	
-[QuvaAPISrc.zip](https://github.com/NumericPrime/QuvaAPI/releases/latest/download/QuvaAPISrc.zip)
+[QuvaAPISrc.zip](https://github.com/NumericPrime/QuvaAPI/releases/latest/download/QuvaAPISrc.zip)<br>
 The documentation can be found in the doc/ folder
 
 # Installation
