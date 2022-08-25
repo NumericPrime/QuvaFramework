@@ -298,7 +298,7 @@ The documentation can be found in the doc/ folder
 </ol>
 This is an example eclipse-project that uses Quva:
 
-[QuvaAPISrc.zip](https://github.com/NumericPrime/QuvaAPI/releases/latest/download/QuvaTestGithub.zip)
+[QuvaTestGithub.zip](https://github.com/NumericPrime/QuvaAPI/releases/latest/download/QuvaTestGithub.zip)
 # Requirements
 
 <ul>
