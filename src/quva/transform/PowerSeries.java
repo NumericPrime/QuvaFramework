@@ -2,12 +2,21 @@ package quva.transform;
 
 import java.util.*;
 
+import quva.construct.CarryRule;
+import quva.construct.QuvaConstruct;
+import quva.construct.QuvaConstructRegister;
+import quva.construct.SafeConstruct;
 import quva.core.QUBOMatrix;
+import quva.core.QuvaDebug;
 
 /**Can create (and register) a power of a single variable.
  * It works with <b>vastly</b> less qubits than you would need with just chaining registerMultiply. This class is used by {@code QuvaPolynomial} to create a polynomial equation.
  * @see quva.transform.QuvaPolynomial*/
-public class PowerSeries implements SingleVarTransformation {
+public class PowerSeries implements SingleVarTransformation,QuvaConstruct {
+	/**CarryRule to be applied
+	 * @see quva.construct.CarryRule*/
+	public CarryRule appliedRule=SafeConstruct.standardRule;
+	QuvaConstructRegister reg=new QuvaConstructRegister();
 	/**Name of the variable in wich the highest power gets saved*/
 	public String var;
 	/**<b>highest</b> power used in the series*/
@@ -52,10 +61,15 @@ public class PowerSeries implements SingleVarTransformation {
 			for(Boolean cur:keys) if(cur) counter++;
 			base.put(keys, counter==1);
 			if(counter==1) for(int i=0;i<keys.size();i++) if(keys.get(i)) getter=i;
-			if(counter==1) allocBit.put(keys,m.find(var)[getter]); else
-			allocBit.put(keys,m.Qubits.next());
-			}
-		for(List<Boolean> keys:allocWeight.keySet()) {
+			int bit=0;
+			if(counter==1) allocBit.put(keys,bit=m.find(var)[getter]); else
+			allocBit.put(keys,bit=m.Qubits.next());
+			reg.put(QuvaConstructRegister.convert(keys), bit);
+		}
+		QuvaDebug.log("PowerSeries.apply", "Used bits "+allocBit.size()+" "+reg.size());
+		//relocAll();
+		reprocess();
+		/*for(List<Boolean> keys:allocWeight.keySet()) {
 			Boolean[] el=keys.toArray(new Boolean[] {});
 			//int j=0;
 			if(!base.get(keys)) {
@@ -139,13 +153,12 @@ public class PowerSeries implements SingleVarTransformation {
 		int bitsmax=(int)(quva.core.QuvaUtilities.log2((float) Math.pow(highest,power)));
 		int bitsmin=(int)(quva.core.QuvaUtilities.log2((float) Math.pow(lowest,power)));
 		int bitstotal=bitsmax-bitsmin;
-		System.out.println(bitsmax);
-		System.out.println(bitsmin);
+		//System.out.println(bitsmax);
+		//System.out.println(bitsmin);
 		float maxWeight=(1<<bitsmax);
-		System.out.println(bitstotal);
-		System.out.println(maxWeight);
 		lowerPower(power,"pow<"+lastVarUsed+"><"+power+">");
 		lastMatrixUsed.register(var,bitstotal,maxWeight);
+		lastMatrixUsed.linearEquation("pow<"+lastVarUsed+"><"+power+">-"+var);
 	}
 	public List<Map<List<Boolean>,Float>> savedPowers=new ArrayList<Map<List<Boolean>,Float>>();
 	/**Buffer for the weights of the variable to be transformed*/
@@ -176,9 +189,9 @@ public class PowerSeries implements SingleVarTransformation {
 		float old=0;
 		if(allocWeight.containsKey(imp)) old=allocWeight.get(imp);
 		else allocWeight.put(imp, old);
-		
 		allocWeight.replace(imp, old+w);
 	}
+	/**Part of the algorithm to make the PowerSeries work*/
 	public void advancePower() {
 		Map<List<Boolean>,Float> newAllocWeight=new WeakHashMap<List<Boolean>,Float>();
 		Map<List<Boolean>,Float> oldAllocWeight=allocWeight;
@@ -193,8 +206,104 @@ public class PowerSeries implements SingleVarTransformation {
 		//System.out.println("");
 		allocWeight=newAllocWeight;
 	}
+	/**Part of the algorithm to make the PowerSeries work
+	 * @param map map to be used
+	 * @param key key to be used
+	 * @param value value to be used*/
 	public void increment(Map<List<Boolean>,Float> map,List<Boolean> key,float value) {
 		if(map.containsKey(key)) map.replace(key, value+map.get(key));
 		else map.put(key, value);
 	}
+	/**Optimization algorithm to make the Hamiltonmatrix more sparse
+	 * @deprecated This doesn't work yet!
+	 * @param a first key
+	 * @param b second key*/
+	@Deprecated
+	public void reloc(List<Boolean> a,List<Boolean> b) {
+		QuvaDebug.log("PowerSeries.reloc", "\nRelocing:",QuvaDebug.BooleanOutput((Boolean[]) a.toArray(new Boolean[a.size()])), QuvaDebug.BooleanOutput((Boolean[]) b.toArray(new Boolean[b.size()])));
+		boolean authorize=true;
+		authorization: {
+			Boolean[] and=(Boolean[]) b.toArray(new Boolean[b.size()]);
+			for(int i=0;i<and.length;i++) if(a.get(i)) and[i]=true;
+			if(!reg.containsKey(QuvaConstructRegister.convert(and))) authorize=false;
+			//if(a.equals(b)) authorize=false;
+			//List<Boolean> andAsList=Arrays.asList(and);
+			//if(a.equals(andAsList)||b.equals(andAsList)) authorize=false;
+			/*
+		int found=0;
+		int found2=0;
+		if(a.equals(b)) {
+			authorize=false;
+			break authorization;
+		}
+		loop: {
+			for(Boolean elm:a) if(elm) found++;
+			if(found>=2) break loop;
+			authorize=false;
+			break authorization;
+		}
+		loop: {
+			for(Boolean elm:b) if(elm) found2++;
+			if(found2>=2) break loop;
+			authorize=false;
+			break authorization;
+		}
+		QuvaDebug.log("PowerSeries.reloc.checks", "\nChecking:",found,found2);
+		
+			if(found==found2+1) authorize=false;
+			if(found==found2-1) authorize=false;*/
+		}
+		//authorize=true;
+		authorized:{
+			if(!authorize) break authorized;
+			float val=lastMatrixUsed.get(allocBit.get(a), allocBit.get(b));
+			lastMatrixUsed.set(0,allocBit.get(a), allocBit.get(b));
+			Boolean[] and=(Boolean[]) b.toArray(new Boolean[b.size()]);
+			for(int i=0;i<and.length;i++) if(a.get(i)) and[i]=true;
+			QuvaDebug.log("PowerSeries.reloc","\nAuthorization Successful!",a+"\n"+b+"\n->"+Arrays.asList(and),allocBit.get(a)+" "+allocBit.get(b)+"->"+allocBit.get(Arrays.asList(and)),"Value "+val);
+			QuvaDebug.log("PowerSeries.reloc","Recalling",lastMatrixUsed.get(allocBit.get(Arrays.asList(and)), allocBit.get(Arrays.asList(and))));
+
+			lastMatrixUsed.addBasic(val, allocBit.get(Arrays.asList(and)), allocBit.get(Arrays.asList(and)));
+			QuvaDebug.log("PowerSeries.reloc","New value",lastMatrixUsed.get(allocBit.get(Arrays.asList(and)), allocBit.get(Arrays.asList(and))));
+
+
+		}
+	}
+	/**Optimization algorithm to make the Hamiltonmatrix more sparse
+	 * @deprecated This doesn't work yet!*/
+	@Deprecated
+	public void relocAll() {
+		QuvaDebug.log("PowerSeries.relocAll","Starting reloc");
+		BruteForceIterator it=new BruteForceIterator(2,retw.length);
+		BruteForceIterator it2=new BruteForceIterator(2,retw.length);
+		it.next();
+		it2.next();
+		int i=0;
+		for(int[] comb:it) {
+			for(int[] comb2:it2) {
+				Boolean[] bool1=conv(comb);
+				Boolean[] bool2=conv(comb2);
+				if(reg.containsKey(QuvaConstructRegister.convert(bool1)))
+					if(reg.containsKey(QuvaConstructRegister.convert(bool2)))
+						reloc(Arrays.asList(bool1),Arrays.asList(bool2));
+			}
+			it2=new BruteForceIterator(2,retw.length);
+			i++;
+			for(int j=0;j<=i;j++) it2.next();
+		}
+	}
+	/**{@inheritDoc}*/
+	@Override
+	public QuvaConstructRegister getRegistry() {
+		return reg;
+	}
+	/**{@inheritDoc}*/
+	@Override
+	public void process() {
+	}
+	/**Reapplies the Construct. You can e.g. change amplification or layer and reapply the construct.*/
+	public void reprocess() {
+		new SafeConstruct(var,appliedRule,this,lastMatrixUsed).process();
+	}
+
 }

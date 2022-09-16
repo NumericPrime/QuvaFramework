@@ -1127,6 +1127,32 @@ public class QUBOMatrix extends ExecuteProgram implements Cloneable,Serializable
 	  }
 	  return null;
   }
+  /**Calculates the value of a variable based on a list of arbitrary qubits
+   * @param values values of the qubits
+   * @param qubits qubits involved
+   * @return the value of the variable
+   * @see quva.core.QUBOMatrix#execute(int[])
+   * @see quva.core.QUBOMatrix#readAllVars()
+   * @see quva.core.QUBOMatrix#readVar(String)
+   * @see quva.core.QUBOMatrix#readVar(int[],String)*/
+  public float inset(int[] values,int[] qubits) {
+	  float val[]=registeredWeights.get(qubits);
+	  float ret=0;
+	  for(int i=0;i<val.length;i++) ret+=values[i]*val[i];
+	  return ret;
+  }
+  /**Calculates the value of a variable based on a list of arbitrary qubits
+   * @param values values of the qubits
+   * @param var variables involved involved
+   * @return the value of the variable
+   * @see quva.core.QUBOMatrix#readVar(String)
+   * @see quva.core.QUBOMatrix#readVar(int[],String)*/
+  public float inset(int[] values,String var) {
+	  float val[]=findWeight(var);
+	  float ret=0;
+	  for(int i=0;i<val.length;i++) ret+=values[i]*val[i];
+	  return ret;
+  }
   /**Reads the value of a variable from a list of qubits values
    * @param values values of the qubits
    * @param qubits qubits involved
@@ -1312,7 +1338,7 @@ public class QUBOMatrix extends ExecuteProgram implements Cloneable,Serializable
   public void amplify(float amp) {
 	  this.amp=amp;
   }
-  /**Adds a value to the entry the weight between qubit a and qubit b. This will be scaled by the selected layer.
+  /**Adds a value to the entry the weight between qubit a and qubit b. This will be scaled by the selected layer and amplification.
    * @param v value to be added
    * @param a number of the first qubit
    * @param b number of the second qubit
@@ -1320,6 +1346,15 @@ public class QUBOMatrix extends ExecuteProgram implements Cloneable,Serializable
    * @see quva.core.QUBOMatrix#add(double,int)*/
   public void add(float v, int a, int b) {
     matrix[Math.min(a, b)][Math.max(a, b)]+=amp*Math.pow(m, layer)*v;
+  }
+  /**Adds a value to the entry the weight between qubit a and qubit b. This will <b>not</b> be scaled by the selected layer and amplification.
+   * @param v value to be added
+   * @param a number of the first qubit
+   * @param b number of the second qubit
+   * @see quva.core.QUBOMatrix#layer(int)
+   * @see quva.core.QUBOMatrix#add(double,int)*/
+  public void addBasic(float v, int a, int b) {
+    matrix[Math.min(a, b)][Math.max(a, b)]+=v;
   }
   /**Sets a value to the entry the weight between qubit a and qubit b.
    * @param v value to be inserted

@@ -227,4 +227,12 @@ public class QuvaUtilities{
 		for(int i=0;i<arr.length;i++) ret[i]=(float) arr[i];
 		return ret;
 	}
+	/**Converts an array of floats to an array of ints
+	 * @param arr array to be convert
+	 * @return array of floats with the same value*/
+	public static int[] toIntArray(float[] arr) {
+		int ret[]=new int[arr.length];
+		for(int i=0;i<arr.length;i++) ret[i]=(int) arr[i];
+		return ret;
+	}
 }
