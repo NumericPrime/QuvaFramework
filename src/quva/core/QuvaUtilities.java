@@ -53,6 +53,12 @@ public class QuvaUtilities{
 	/**A {@link PostProcessingHandler} that arranges the qubits in a single column.
 	 * @see QUBOMatrix#applyPostProcessing(PostProcessingHandler[])*/
 	public static final PostProcessingHandler OUTPUTCOL=new OutputGrid(1);
+	/**Path to the .dll for the C++ implementation of MinorMiner*/
+	public static final String WINDOWS="native.dll";
+	/*Path to the .so for the C++ implementation of MinorMiner*/
+	//public static final String LINUX="native.so";
+	/**Makes quva use no python scripts (Currently only works for anneal)*/
+	public final static int INTERNAL=32;
 	/**Reads a file as String
 	 * @param path file path
 	 * @return contents of the file*/

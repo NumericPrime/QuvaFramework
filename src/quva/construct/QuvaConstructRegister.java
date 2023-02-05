@@ -97,4 +97,12 @@ public class QuvaConstructRegister extends HashMap<List<Boolean>,Integer> implem
 	public QuvaConstructRegister getRegistry() {
 		return this;
 	}
+	/**Converts a boolean[] to a List
+	 * @param state array to be converted
+	 * @return the array as list*/
+	public static List<Boolean> convert(boolean[] state) {
+		List<Boolean> ret=new ArrayList<Boolean>();
+		for(int i=0;i<state.length;i++) ret.add(state[i]);
+		return ret;
+	}
 }

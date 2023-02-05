@@ -52,7 +52,6 @@ public abstract class QuvaApplication extends QuvaProgram implements quva.util.Q
 	public QuvaApplication(int mode) {
 		super();
 		this.mode=mode;
-		delayed=((mode>>2&1)==1);
 		initialize(mode);
 	}
 	/**This constructor takes the size of the matrix and the mode used for execution of the application.
@@ -60,6 +59,7 @@ public abstract class QuvaApplication extends QuvaProgram implements quva.util.Q
 	 * @param mode the mode used for execution. It accepts the same parameters as {@link quva.core.QUBOMatrix#execute(int)} plus {@code NONE} (=-1) wich will cause the applet not to be executed at all.*/
 	public QuvaApplication(int size,int mode) {
 		super(size);
+		this.mode=mode;
 		initialize(mode);
 	}
 	/**This constructor takes a done matrix and the mode used for execution of the application.
@@ -108,9 +108,10 @@ public abstract class QuvaApplication extends QuvaProgram implements quva.util.Q
 	/**This method is called by the constructor
 	 * @param mode of the execution chosen in the constructor*/
 	public void initialize(int mode) {
+		//delayed=((mode>>2&1)==1);
 		h=buffer.get(Thread.currentThread());
 		if(h==null) h=(in1,in2,in3)->{};
-		if(mode>=0&&!delayed) execute();
+		if(mode>=0&&((mode>>2&1)==0)) execute();
 	}
 	/**{@inheritDoc}*/
 	@Override

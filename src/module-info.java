@@ -13,5 +13,7 @@ open module QuvaAPI {
 	exports quva.transform;
 	exports quva.postprocessing;
 	exports quva.construct;
+	exports dwas.main;
 	requires java.desktop;
+	requires java.net.http;
 }

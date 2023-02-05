@@ -1,0 +1,2 @@
+/**This package was first developed isolated from Quva. Since this package uses JNI I can't change the package-name without breaking the library.<br>Here all the classes needed for the INTERNAL launch mode are declared.*/
+package dwas.main;

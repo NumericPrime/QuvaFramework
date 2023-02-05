@@ -16,7 +16,10 @@ public class PowerSeries implements SingleVarTransformation,QuvaConstruct {
 	/**CarryRule to be applied
 	 * @see quva.construct.CarryRule*/
 	public CarryRule appliedRule=SafeConstruct.standardRule;
-	QuvaConstructRegister reg=new QuvaConstructRegister();
+	/**Registry used (needed for the implementation of QuvaConstruct)*/
+	public QuvaConstructRegister reg=new QuvaConstructRegister();
+	/**Determines whether PowerSeries should create its own construct*/
+	public boolean createConstruct=true;
 	/**Name of the variable in wich the highest power gets saved*/
 	public String var;
 	/**<b>highest</b> power used in the series*/
@@ -27,6 +30,15 @@ public class PowerSeries implements SingleVarTransformation,QuvaConstruct {
 	public PowerSeries(int power_,String vr){
 		var=vr;
 		power=power_;
+	}
+	/**Allows the PowerSeries to use another construct. This will disable the PowerSeries creating it's own Construct:
+	 * @param qc Construct to be used*/
+	public void pushConstruct(QuvaConstruct qc) {
+		reg=qc.getRegistry();
+		createConstruct=false;
+		for(boolean[] state:reg.getKeys()) {
+			allocBit.put(QuvaConstructRegister.convert(state) , reg.get(state));
+		}
 	}
 	/**Cloning constructor
 	 * @param s the {@code PowerSeries} to be cloned*/
@@ -55,7 +67,7 @@ public class PowerSeries implements SingleVarTransformation,QuvaConstruct {
 			advancePower();
 		}
 		savedPowers.add(new WeakHashMap<List<Boolean>, Float>(allocWeight));
-		for(List<Boolean> keys:allocWeight.keySet()) if(!allocBit.containsKey(keys)){
+		if(createConstruct) for(List<Boolean> keys:allocWeight.keySet()) if(!allocBit.containsKey(keys)){
 			int counter=0;
 			int getter=0;
 			for(Boolean cur:keys) if(cur) counter++;
@@ -67,39 +79,8 @@ public class PowerSeries implements SingleVarTransformation,QuvaConstruct {
 			reg.put(QuvaConstructRegister.convert(keys), bit);
 		}
 		QuvaDebug.log("PowerSeries.apply", "Used bits "+allocBit.size()+" "+reg.size());
-		//relocAll();
-		reprocess();
-		/*for(List<Boolean> keys:allocWeight.keySet()) {
-			Boolean[] el=keys.toArray(new Boolean[] {});
-			//int j=0;
-			if(!base.get(keys)) {
-				for(int i=0;i<el.length;i++) {
-					if(el[i]) {
-						//j=i;
-						el[i]=false;
-						m.link(allocBit.get(keys), allocBit.get(Arrays.asList(el)), m.find(var)[i]);
-						break;
-					}
-				}
-			}
-		}/*
-		List<Float> weights=new LinkedList<Float>();
-		List<Integer> bits=new LinkedList<Integer>();
-		for(List<Boolean> keys:allocWeight.keySet()) {
-			weights.add(allocWeight.get(keys));
-			bits.add(allocBit.get(keys));
-		}
-		Integer[] bitsArray1=bits.toArray(new Integer[1]);
-		Float[] weightsArray1=weights.toArray(new Float[1]);
-		int[] bitsArray2=new int[bitsArray1.length];
-		float[] weightsArray2=new float[bitsArray1.length];
-		for(int i=0;i<bitsArray1.length;i++) {
-			bitsArray2[i]=bitsArray1[i];
-			weightsArray2[i]=weightsArray1[i];
-		}
-		m.register(this.var, bitsArray2.clone(), weightsArray2.clone());*/
+		if(createConstruct) reprocess();
 		lowerPower(power,this.var);
-		//System.out.println("apply call");
 	}
 	/**Here you can use the carries created by apply to create a new variable containing a power <b>lower or equal</b> to the one made by apply. This method has to be used <b>after</b> apply.
 	 * @param power the power which gets calculated

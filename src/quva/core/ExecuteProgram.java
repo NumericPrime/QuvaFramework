@@ -7,6 +7,10 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+import dwas.main.QUBOEmbedder;
+import dwas.main.QUBOProblem;
+import dwas.main.SimulatedAnnealingSolver;
+
 /**This class handles the execution of the Hamilton-Matrix using an own class with static methods allows multithreading the execution of multiple quantumannealer-programs*/
 public class ExecuteProgram extends QuvaUtilities{
 	/**Here the locations of the python scripts is saved*/
@@ -133,8 +137,14 @@ public class ExecuteProgram extends QuvaUtilities{
 		  //System.out.println(m);
 		  if(push) m.push();
 		  if(((mode>>1)&1)==((AUTOTRUNCATE>>1)&1)) m.truncate();
-		  if((mode&1)==SIMULATE) return m.process(simulateStatic(),SIMULATE);
-		  if((mode&1)==ANNEAL) return m.process(runDWaveStatic(),ANNEAL);
+		  if((mode&1)==SIMULATE&&((mode>>5)&1)!=INTERNAL>>5) return m.process(simulateStatic(),SIMULATE);
+		  if((mode&1)==ANNEAL&&((mode>>5)&1)!=INTERNAL>>5) return m.process(runDWaveStatic(),ANNEAL);
+		  QUBOEmbedder.chainStrength=m.chainStrength;
+		  if((mode&1)==ANNEAL) return QUBOProblem.construct(m.matrix, 
+				  QuvaExecutionSettings.settings.get("token"),
+				  "Advantage_system4.1")
+				  .executeEmbedded(Integer.parseInt(QuvaExecutionSettings.settings.get("samples")))[0];
+		  if((mode&1)==SIMULATE) return SimulatedAnnealingSolver.solve(m.matrix);
 		  return null;
 	  }
 }
