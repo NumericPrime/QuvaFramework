@@ -18,7 +18,7 @@ for index,value in np.ndenumerate(qubomatrix):
 print('Converted matrix into QUBO for D-Wave:\n', qubo, '\n')
 # embed and run on the D-Wave with 7500 reads
 #Token hier einfügen
-response = EmbeddingComposite(DWaveSampler(token='Insert Token here')).sample_qubo(qubo, num_reads=7500)
+response =        EmbeddingComposite(DWaveSampler(token='Insert Token here')).sample_qubo(qubo, num_reads=7500)
 print('Response from the D-Wave:\n', response,response.data, '\n')
 # save results in results.txt
 with open(os.path.join(sys.path[0], 'results2.txt'),'a') as file:

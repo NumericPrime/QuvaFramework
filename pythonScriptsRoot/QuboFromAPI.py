@@ -16,18 +16,19 @@ for index,value in np.ndenumerate(qubomatrix):
     if value != 0:
         qubo[index] = value
 # embed and run on the D-Wave with 7500 reads
-#Token hier einfÃ¼gen
+#Token hier einfügen
 
 lastline=''
 token=''
 samples=7500
 with open(os.path.join(sys.path[0], 'options.txt'),'r') as file:
-    lastline=str(file.readlines()[0]).rstrip()
-    splitted=lastline.split(":")
-    if splitted[0]=="token":
-        token=splitted[1]
-    if splitted[0]=="samples":
-        token=int(splitted[1])
+    for lastline in file:
+        lastline=lastline.strip()
+        splitted=lastline.split(":")
+        if splitted[0]=="token":
+            token=splitted[1]
+        if splitted[0]=="samples":
+            samples=int(splitted[1])
 response =EmbeddingComposite(DWaveSampler(token=token)).sample_qubo(qubo, num_reads=samples)
 
 # save results in results.txt
